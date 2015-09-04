@@ -39,6 +39,7 @@
         _promptLabel = [[UILabel alloc] init];
         _promptLabel.translatesAutoresizingMaskIntoConstraints = NO;
         _promptLabel.textAlignment = NSTextAlignmentCenter;
+        _promptLabel.numberOfLines = 0; // support for multi-line prompt label
         _promptLabel.font = [UIFont systemFontOfSize:(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? 22.0f : 18.0f];
         [_promptLabel setContentCompressionResistancePriority:UILayoutPriorityFittingSizeLevel
                                                       forAxis:UILayoutConstraintAxisHorizontal];
@@ -243,7 +244,8 @@
     if ([self.input length] < pinLength) {
         return;
     }
-    
+
+/*
     if ([self.delegate pinView:self isPinValid:self.input])
     {
         double delayInSeconds = 0.3f;
@@ -259,6 +261,17 @@
             [self.delegate incorrectPinWasEnteredInPinView:self];
         }];
     }
+*/
+    [self.delegate pinView:self isPinValid:self.input completion:^(BOOL success) {
+        if (success) {
+            [self.delegate correctPinWasEnteredInPinView:self];
+        } else {
+            [self.inputCirclesView shakeWithCompletion:^{
+                [self resetInput];
+                [self.delegate incorrectPinWasEnteredInPinView:self];
+            }];
+        }
+    }];
 }
 
 #pragma mark - Util

@@ -50,6 +50,7 @@ static const NSUInteger THNumberOfPinEntries = 6;
                                                           relatedBy:NSLayoutRelationEqual
                                                              toItem:self.view attribute:NSLayoutAttributeTop
                                                          multiplier:1.0f constant:60.0f]];
+
     NSDictionary *views = @{ @"secretContentView" : self.secretContentView };
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(20)-[secretContentView]-(20)-|"
                                                                       options:0 metrics:nil views:views]];
@@ -63,7 +64,7 @@ static const NSUInteger THNumberOfPinEntries = 6;
 
 - (void)applicationDidEnterBackground:(NSNotification *)notification
 {
-    if (! self.locked) {
+    if (!self.locked) {
         [self showPinViewAnimated:NO];
     }
 }
@@ -126,13 +127,14 @@ static const NSUInteger THNumberOfPinEntries = 6;
     [self.loginLogoutButton setTitle:@"Enter PIN" forState:UIControlStateNormal];
 }
 
-#pragma mark - THPinViewControllerDelegate
+#pragma mark - THPinViewControllerDelegate  (@required)
 
 - (NSUInteger)pinLengthForPinViewController:(THPinViewController *)pinViewController
 {
     return 4;
 }
 
+/*
 - (BOOL)pinViewController:(THPinViewController *)pinViewController isPinValid:(NSString *)pin
 {
     if ([pin isEqualToString:self.correctPin]) {
@@ -142,11 +144,38 @@ static const NSUInteger THNumberOfPinEntries = 6;
         return NO;
     }
 }
+*/
+
+- (void)pinViewController:(THPinViewController *)pinViewController isPinValid:(NSString *)pin completion:(void (^)(BOOL))completionBlock
+{
+    if ([pin isEqualToString:self.correctPin])
+    {
+        if (completionBlock)
+        {
+            completionBlock(YES);
+        }
+    }
+    else
+    {
+        self.remainingPinEntries--;
+
+        if (completionBlock)
+        {
+            completionBlock(NO);
+        }
+    }
+
+}
+
 
 - (BOOL)userCanRetryInPinViewController:(THPinViewController *)pinViewController
 {
     return (self.remainingPinEntries > 0);
 }
+
+
+#pragma mark - THPinViewControllerDelegate  (@optional)
+
 
 - (void)incorrectPinEnteredInPinViewController:(THPinViewController *)pinViewController
 {

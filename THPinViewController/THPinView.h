@@ -15,7 +15,8 @@
 
 @required
 - (NSUInteger)pinLengthForPinView:(THPinView *)pinView;
-- (BOOL)pinView:(THPinView *)pinView isPinValid:(NSString *)pin;
+//- (BOOL)pinView:(THPinView *)pinView isPinValid:(NSString *)pin;
+- (void)pinView:(THPinView *)pinView isPinValid:(NSString *)pin completion:(void (^)(BOOL success))completionBlock;
 - (void)cancelButtonTappedInPinView:(THPinView *)pinView;
 - (void)correctPinWasEnteredInPinView:(THPinView *)pinView;
 - (void)incorrectPinWasEnteredInPinView:(THPinView *)pinView;
